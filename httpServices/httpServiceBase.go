@@ -2,20 +2,19 @@ package httpServices
 
 import (
 	"errors"
+	"net/http"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
-type HttpServiceGin struct {
+type HttpServiceBase struct {
 }
 
-func NewHttpServiceGin() *HttpServiceGin {
-	return &HttpServiceGin{}
+func NewHttpServiceBase() *HttpServiceBase {
+	return &HttpServiceBase{}
 }
 
-func (hsg *HttpServiceGin) GetAccessToken(context *gin.Context) (string, error) {
-	authHeader := context.Request.Header.Get("Authorization")
+func (hsg *HttpServiceBase) GetAccessToken(request *http.Request) (string, error) {
+	authHeader := request.Header.Get("Authorization")
 
 	// Check that the Authorization header is not empty
 	if authHeader == "" {
@@ -25,7 +24,7 @@ func (hsg *HttpServiceGin) GetAccessToken(context *gin.Context) (string, error) 
 	// Check that the Authorization header uses the Bearer authentication scheme
 	authHeaderParts := strings.Split(authHeader, " ")
 	if len(authHeaderParts) != 2 || authHeaderParts[0] != "Bearer" {
-		context.JSON(401, gin.H{"error": "Invalid Authorization header"})
+		return "", errors.New("invalid Authorization header")
 	}
 
 	return authHeaderParts[1], nil

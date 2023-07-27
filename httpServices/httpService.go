@@ -1,9 +1,7 @@
 package httpServices
 
-import (
-	"golang.org/x/net/context"
-)
+import "net/http"
 
-type IHttpService[T context.Context] interface {
-	GetAccessToken(value T) (string, error)
+type IHttpService interface {
+	GetAccessToken(request *http.Request) (string, error)
 }
